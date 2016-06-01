@@ -1,7 +1,7 @@
 # mdi-spriter
 > mdi cli tool to create mdi sprite from a config.json file specifying all the icons a user wants
 
-*Note:* material-design-icons is a dependency so the install is quite large and may take more time that usually expected for a simple cli app
+*Note:* mdi-spriter depends on material-design-icons (which has lots of stuff) and svg-sprite (which has phantom-js as a dependency) so the install is quite large and may take more time that usually expected for a simple cli app
 
 ## run
 run with the mdis command as follows:
