@@ -6,3 +6,6 @@ DockerfileTEST
 DockerNotes.md
 *.log
 bundle.map.json
+.DS_Store
+tmp
+sprite

@@ -7,3 +7,5 @@ DockerNotes.md
 *.log
 .DS_Store
 bundle.map.json
+tmp
+sprite
