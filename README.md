@@ -10,7 +10,7 @@ run with the mdis command as follows:
 
 ```-c``` command points to a config.json (see example below) containing a list of mdi icons you want.
 
-```-0``` can be set either in the config.json or from cli and specifies the output directory for the complied mdi sprite
+```-o``` can be set either in the config.json or from cli and specifies the output directory for the complied mdi sprite
 
 ## config example
 

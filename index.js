@@ -30,27 +30,9 @@ kgo('required', function (done) {
 
     done(null, files)
   })
-})('mkdir', ['required', 'search'], function (config, files, done) {
-  debug('kgo:mkdir')
-  let tmpDirs = config.tempDirs
-  let objCount = 0
-  let size = Object.keys(tmpDirs).length
-
-  for (var dir in tmpDirs) {
-    objCount++
-    let tmpDir = path.join(__dirname, tmpDirs[dir])
-    fs.emptyDirSync(tmpDir, function (err) {
-      if (err) { done(err) }
-      debug('kgo:mkdir clean dir created ', dir)
-    })
-    if (objCount === size) {
-      done(null, files)
-    }
-  }
-})('copy', ['required', 'mkdir'], function (config, files, done) {
-  var tmpDirs = config.tempDirs
+})('copy', ['required', 'search'], function (config, files, done) {
   files.forEach(function (source, index, array) {
-    var target = path.join(tmpDirs.temp, '/', path.basename(source))
+    var target = path.join(config.temp, '/', path.basename(source))
     debug('kgo:copy clobbering target file', target)
     fs.copySync(source, target, {clobber: true}, function (err) {
       if (err) debug('copy error', err)
@@ -58,11 +40,11 @@ kgo('required', function (done) {
 
     if (index === array.length - 1) {
       debug('done copy', array.length, index)
-      done(null, tmpDirs)
+      done(null)
     }
   })
-})('sprite', ['required', 'copy'], function (config, tmpDirs, done) {
-  var temp = path.join(__dirname, tmpDirs.temp)
+})('sprite', ['required', 'copy'], function (config, copy, done) {
+  var temp = path.join(__dirname, config.temp)
   debug('kgo:sprite creating sprite')
   const spriter = new SVGSpriter({
     dest: argv.o || config.dest,
