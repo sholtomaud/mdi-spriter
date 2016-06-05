@@ -12,6 +12,7 @@ const nodeDir = path.join(__dirname, '/node_modules/material-design-icons')
 const argv = require('minimist')(process.argv.slice(2))
 const mkdirp = require('mkdirp')
 const finder = find(nodeDir)
+const Svg = require('svgutils').Svg
 
 kgo('required', function (done) {
   debug('kgo:required config')
@@ -22,12 +23,7 @@ kgo('required', function (done) {
   }
   let config = require(path.join(process.cwd(), '/', argv.c))
 
-  config.output = (argv.o) ? path.join(process.cwd(), '/', argv.o) :
-  (
-    (config.dest) ? path.join(process.cwd(), '/', config.dest)
-    :
-    path.join(process.cwd(), '/assets')
-  )
+  config.output = (argv.o) ? path.join(process.cwd(), '/', argv.o) : ((config.dest) ? path.join(process.cwd(), '/', config.dest) : path.join(process.cwd(), '/assets'))
 
   config.tmp = (config.temp) ? path.join(process.cwd(), '/', config.temp) : path.join(process.cwd(), '/temp')
 
@@ -49,6 +45,16 @@ kgo('required', function (done) {
   files.forEach(function (source, index, array) {
     var target = path.join(config.tmp, '/', path.basename(source))
     debug('kgo:copy clobbering target file', target)
+
+    Svg.fromSvgDocument(source, function (err, svg) {
+      if (err) {
+        throw new Error('SVG file not found or invalid')
+      }
+
+      var json = svg.toJSON()
+      debug('svg:json', json)
+    })
+
     fs.copySync(source, target, {clobber: true}, function (err) {
       if (err) done(err)
     })
