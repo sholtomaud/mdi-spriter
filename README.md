@@ -21,7 +21,8 @@ You can set the destination directory and the temp directory along with the mate
 ```
 {
   "dest":"sprite",
-  "temp":"temp"
+  "temp":"temp",
+  "fill":"blue",
   "mdi": [
     {
       "icon": "menu",
