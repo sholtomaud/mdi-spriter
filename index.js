@@ -12,6 +12,10 @@ const nodeDir = path.join(__dirname, '/node_modules/material-design-icons')
 const argv = require('minimist')(process.argv.slice(2))
 const mkdirp = require('mkdirp')
 const finder = find(nodeDir)
+const xml2js = require('xml2js')
+const parser = new xml2js.Parser()
+const builder = new xml2js.Builder({headless: true})
+const utf8 = require('utf8')
 
 kgo('required', function (done) {
   debug('kgo:required config')
@@ -22,12 +26,7 @@ kgo('required', function (done) {
   }
   let config = require(path.join(process.cwd(), '/', argv.c))
 
-  config.output = (argv.o) ? path.join(process.cwd(), '/', argv.o) :
-  (
-    (config.dest) ? path.join(process.cwd(), '/', config.dest)
-    :
-    path.join(process.cwd(), '/assets')
-  )
+  config.output = (argv.o) ? path.join(process.cwd(), '/', argv.o) : ((config.dest) ? path.join(process.cwd(), '/', config.dest) : path.join(process.cwd(), '/assets'))
 
   config.tmp = (config.temp) ? path.join(process.cwd(), '/', config.temp) : path.join(process.cwd(), '/temp')
 
@@ -36,6 +35,7 @@ kgo('required', function (done) {
   })
   fs.ensureDir(config.tmp, function (err) {
     if (err) done(err)
+    debug(' - done')
     done(null, config)
   })
 })('search', ['required'], function (config, done) {
@@ -43,6 +43,8 @@ kgo('required', function (done) {
   let icons = config.mdi
   processIcons(icons, function (err, files) {
     if (err) done(err)
+
+    debug(' - done')
     done(null, files)
   })
 })('copy', ['required', 'search'], function (config, files, done) {
@@ -52,13 +54,39 @@ kgo('required', function (done) {
     fs.copySync(source, target, {clobber: true}, function (err) {
       if (err) done(err)
     })
-
     if (index === array.length - 1) {
-      debug('done copy', array.length, index)
+      debug(' - done')
       done(null)
     }
   })
-})('sprite', ['required', 'copy'], function (config, copy, done) {
+})('color', ['required', 'copy'], function (config, copy, done) {
+  debug('kgo:color')
+  fs.walk(config.tmp)
+  .on('readable', function () {
+    var item
+    while ((item = this.read())) {
+      if (item.stats.isFile()) {
+        let file = item.path
+        fs.readFile(file, 'utf8', function (err, data) {
+          if (err) done(err)
+          parser.parseString(data, function (err, result) {
+            if (err) debug(err)
+            let svgPath = result.svg.path
+            svgPath.forEach(function (svg, index, array) {
+              if (!svg.$.fill) result.svg.path[index].$.fill = config.fill
+            })
+            let xml = builder.buildObject(result)
+            fs.writeFileSync(file, xml, 'utf8')
+          })
+        })
+      }
+    }
+  })
+  .on('end', function () {
+    debug(' - done')
+    done(null)
+  })
+})('sprite', ['required', 'color'], function (config, color, done) {
   debug('kgo:sprite creating sprite')
   const spriter = new SVGSpriter({
     dest: config.output,
@@ -99,7 +127,7 @@ kgo('required', function (done) {
         if (err) done(err)
       })
 
-      debug('kgo:sprite done')
+      debug(' - done')
       done(null)
     })
 })(['*'], function (err) {
@@ -119,7 +147,6 @@ function processIcons (icons, callback) {
     })
   })
   finder.on('end', function () {
-    debug('processIcons end. Files')
     callback(null, files)
   })
   finder.on('err', function (err) {
