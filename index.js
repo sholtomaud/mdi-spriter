@@ -48,7 +48,11 @@ kgo('required', function (done) {
     done(null, files)
   })
 })('copy', ['required', 'search'], function (config, files, done) {
-  files.forEach(function (source, index, array) {
+  // files.forEach(function (source, index, array) {
+  for (var source in files) {
+    if (p.hasOwnProperty(source)) {
+      continue
+    }
     var target = path.join(config.tmp, '/', path.basename(source))
     debug('kgo:copy clobbering target file', target)
     fs.copySync(source, target, {clobber: true}, function (err) {
@@ -59,8 +63,9 @@ kgo('required', function (done) {
       done(null)
     }
   })
-})('color', ['required', 'copy'], function (config, copy, done) {
+})('color', ['required', 'search', 'copy'], function (config, files, copy, done) {
   debug('kgo:color')
+
   fs.walk(config.tmp)
   .on('readable', function () {
     var item
@@ -73,7 +78,8 @@ kgo('required', function (done) {
             if (err) debug(err)
             let svgPath = result.svg.path
             svgPath.forEach(function (svg, index, array) {
-              if (!svg.$.fill) result.svg.path[index].$.fill = config.fill
+              // if (!svg.$.fill) result.svg.path[index].$.fill = config.fill
+              if (!svg.$.fill) result.svg.path[index].$.fill = files[file].fill
             })
             let xml = builder.buildObject(result)
             fs.writeFileSync(file, xml, 'utf8')
@@ -136,13 +142,15 @@ kgo('required', function (done) {
 })
 
 function processIcons (icons, callback) {
-  let files = []
+  // let files = []
+  let files = {}
   debug('processIcons')
   finder.on('file', function (file, stat) {
     icons.forEach(function (mdi, index, array) {
       let fileName = 'ic_' + mdi.icon + '_' + (mdi.size || '24px') + '.svg'
       if (fileName === path.basename(file)) {
-        files.push(file)
+        // files.push(file)
+        files[fileName] = mdi.icon
       }
     })
   })
