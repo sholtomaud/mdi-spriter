@@ -1,6 +1,6 @@
 {
   "name": "mdi-spriter",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "mdi cli tool to create mdi sprite from a config.json file specifying all the icons a user wants",
   "main": "index.js",
   "bin": {
