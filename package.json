@@ -13,7 +13,7 @@
     "watch": "watchify scripts/index.js -o client/index.browser.js -d -v & stylus -u nib -w stylus/index.styl -o client/styles/index.css",
     "build": "browserify -t brfs -g uglifyify  -d -p [minifyify --map bundle.map.json --output bundle.map.json ] scripts/index.js > ../phdnode.github.io/index.browser.js & stylus -r -u nib < ~/dev/tute/stylus/index.styl | cssmin > ../phdnode.github.io/style.css | cssmin ",
     "dist": "npm version patch -m \"Bumped to %s\"",
-    "postversion": "git push && git push --tags && npm run build",
+    "postversion": "git push && git push --tags",
     "example:js": "browserify -t brfs example/index.js >  example/index.browser.js ",
     "build:example": "npm-run-all example:*",
     "test": "test",

@@ -5,7 +5,7 @@
 
 ## Why?
 
-You may have an app that only requires a few of the icons from [Google's Material icons ](https://design.google.com/icons/). But why download them manually and do all that palava? mdis was created to relieve you from the manual steps. You can now just setup a config.json file instead, and then include mdis in your build system so you can get the icons and color you want.
+You may have an app that only requires a few of the icons from [Google's Material icons ](https://design.google.com/icons/). But why download them manually and do all that palava? mdis was created to relieve you from the manual steps. You can now just setup a config.json file in your project directory instead to create the sprite with the icons and color you want. You can then include mdis as a required step in your build system.
 
 The downside, as noted above, is that mdis depends on some large libraries.
 
