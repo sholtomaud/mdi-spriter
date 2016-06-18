@@ -1,10 +1,17 @@
 # mdi-spriter
-> mdi cli tool to create mdi sprite from a config.json file specifying all the icons a user wants
+> cli tool to create a sprite from [Google's material design icons](https://design.google.com/icons/)
 
 *Note:* mdi-spriter depends on material-design-icons (which has lots of stuff) and svg-sprite (which has phantom-js as a dependency) so the install is quite large and may take more time that usually expected for a simple cli app
 
+## Why?
+
+You may have an app that only requires a few of the icons from [Google's Material icons ](https://design.google.com/icons/). But why download them manually and do all that palava? mdis was created to relieve you from the manual steps. You can now just setup a config.json file instead, and then include mdis in your build system so you can get the icons and color you want.
+
+The downside, as noted above, is that mdis depends on some large libraries.
+
 ## run
-run with the mdis command as follows:
+
+run mdis from the command line as follows:
 
 ```
 >mdis -c config.json -o sprite
@@ -20,7 +27,7 @@ You might also include it in your package.json build workflow  like that below, 
 
 ```json
 "scripts": {
-    "build:dist": "parallelshell 'npm run build:js' 'npm run build:styles' 'npm run build:mdis'",
+    "build:dist": "parallelshell 'npm run build:js' 'npm run build:mdis' 'npm run build:styles' 'npm run build:css'",
     "build:mdis": "mdis -c MDISConfig.json",
     "build:styles": "stylus -u nib -u autoprefixer-stylus -w assets/index.styl -o example/index.css",
     "build:js": "browserify -t brfs dev/index.js >  dist/index.browser.js ",

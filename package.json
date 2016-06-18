@@ -48,7 +48,9 @@
     "tape": "^4.5.1"
   },
   "keywords": [
-    "material design icons",
-    "fastn"
+    "Google material design icons",
+    "fastn",
+    "mdi",
+    "sprite"
   ]
 }
