@@ -15,7 +15,6 @@ const finder = find(nodeDir)
 const xml2js = require('xml2js')
 const parser = new xml2js.Parser()
 const builder = new xml2js.Builder({headless: true})
-const utf8 = require('utf8')
 
 kgo('required', function (done) {
   debug('kgo:required config')
@@ -47,15 +46,12 @@ kgo('required', function (done) {
     done(null, files)
   })
 })('copy', ['required', 'search'], function (config, files, done) {
-  // files.forEach(function (source, index, array) {
   const length = Object.keys(files).length
   const tempFiles = {}
   let i = 1
 
   for (var source in files) {
     let last = i === length // true if last, false if not last
-    // debug('last', last, 'i', i, 'length', length, 'source', source, 'file ', files[source])
-
     if (!files.hasOwnProperty(source)) {
       debug('hasOwnProperty')
       continue
@@ -68,14 +64,11 @@ kgo('required', function (done) {
     fs.copySync(source, target, {clobber: true}, function (err) {
       if (err) done(err)
     })
-    // if (index === array.length - 1) {
-
     if (last) {
       debug(' - done')
       done(null, tempFiles)
     }
     i++
-  // })
   }
 })('color', ['required', 'copy'], function (config, tempFiles, done) {
   debug('kgo:color')
@@ -86,46 +79,21 @@ kgo('required', function (done) {
     while ((item = this.read())) {
       if (item.stats.isFile()) {
         let file = item.path
-  // const length = Object.keys(tempFiles).length
-  // let i = 1
-  // for (var file in tempFiles) {
-    // let last = i === length // true if last, false if not last
         debug('file: ', file)
-
-    // if (!tempFiles.hasOwnProperty(file)) {
-    //   debug('hasOwnProperty')
-    //   continue
-    // }
-
         fs.readFile(file, 'utf8', function (err, data) {
           if (err) done(err)
-
-          debug('readFile: ', file)
-
           parser.parseString(data, function (err, result) {
             if (err) debug(err)
             let svgPath = result.svg.path
             svgPath.forEach(function (svg, index, array) {
-              // if (!svg.$.fill) result.svg.path[index].$.fill = config.fill
-
               debug('file: ', file)
               debug('fill: ', tempFiles[file].fill)
-
               if (!svg.$.fill) result.svg.path[index].$.fill = tempFiles[file].fill
             })
             let xml = builder.buildObject(result)
             fs.writeFileSync(file, xml, 'utf8')
-
-        // if (last) {
-        //   debug(' - done')
-        //   done(null, tempFiles)
-        // }
-        // i++
           })
         })
-  // }
-
-
       }
     }
   })
@@ -183,7 +151,6 @@ kgo('required', function (done) {
 })
 
 function processIcons (icons, callback) {
-  // let files = []
   let files = {}
   let fileCheck = {}
 
@@ -192,7 +159,6 @@ function processIcons (icons, callback) {
     icons.forEach(function (mdi, index, array) {
       let fileName = 'ic_' + mdi.icon + '_' + (mdi.size || '24px') + '.svg'
       if (fileName === path.basename(file) && !fileCheck[fileName]) {
-        // files.push(file)
         files[file] = mdi
       } else {
         fileCheck[fileName]
